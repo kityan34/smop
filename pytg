@@ -1,0 +1,100 @@
+
+
+%Simülasyon Parametreleri%
+
+h=0.005;
+tf=100;
+
+%Kontrol Parametreleri%
+ kp=30; kd=2;kv=1;
+u1=.5;
+% Başlangıç Koşulları%
+
+x=[0 0]; 
+I=0;
+
+
+k=1;
+
+
+%e(1)=0; de(1)=0; ie(1)=0;
+
+
+e=zeros(1,100);
+de=zeros(1,100);
+ie=zeros(1,100);
+%Döngü%
+			
+for T=0:h:tf
+
+t=0:h:tf;
+
+
+xk=x;
+
+
+I=I+1;
+
+
+k=k+1;
+
+
+%Kontrol Algoritması%
+ref=0.5;
+e(k)=ref-x(1);
+de(k)=e(k-1)-e(k);
+
+
+u=kp*e(k)+kd*de(k);
+
+%RKIV  Programı%	
+
+[dx]=rlcf(x,u);
+ak1=h*dx;
+x=xk+0.5*ak1;
+
+[dx]=rlcf(x,u);
+ak2=h*dx;
+x=xk+0.5*ak2;
+
+[dx]=rlcf(x,u);
+ak3=h*dx;
+x=xk+ak3;
+
+[dx]=rlcf(x,u);
+ak4=h*dx;
+x=xk+(ak1+2*ak2+2*ak3+ak4)/6;
+
+
+xp(I,:)=x;
+
+
+
+end
+
+
+
+% Grafik Programlar%
+
+plot(t, xp(:,1),'b')
+
+grid
+%axis([0 10 -2 5])
+xlabel('t')
+ylabel('x1')
+
+
+
+
+figure(gcf)
+pause(1)
+figure
+
+
+plot(t, xp(:,2),'b')
+
+grid
+%axis([-10 50 -2 5])
+xlabel('t')
+ylabel('x2')
+
